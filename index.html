@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1920">
-<title>Decibelmetre Pro — SPL-9000</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decibelmetre Pro — Controle</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;400;600&display=swap');
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -11,36 +11,37 @@
   .tabs{display:flex;background:#0d1015;border-bottom:1px solid #1a2030;}
   .tab{padding:10px 24px;font-size:12px;letter-spacing:2px;color:#556;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase;}
   .tab.active{color:#00bcd4;border-bottom-color:#00bcd4;}
-  .brand-bar{width:100%;background:#111418;border-bottom:1px solid #1e2530;padding:8px 24px;display:flex;align-items:center;justify-content:space-between;}
-  .status-led{width:8px;height:8px;border-radius:50%;background:#00ff88;animation:blink 1.2s ease-in-out infinite;}
+  .brand-bar{width:100%;background:#111418;border-bottom:1px solid #1e2530;padding:8px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .status-led{width:8px;height:8px;border-radius:50%;background:#556;transition:background .3s;}
+  .status-led.connected{background:#00ff88;animation:blink 1.2s ease-in-out infinite;}
   @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-  .display-area{width:100%;min-height:320px;display:flex;flex-direction:column;padding:16px 20px 10px;gap:10px;position:relative;overflow:hidden;}
+  .display-area{width:100%;min-height:280px;display:flex;flex-direction:column;padding:14px 16px 10px;gap:10px;position:relative;overflow:hidden;}
   .bg-layer{position:absolute;top:0;left:0;right:0;bottom:0;z-index:0;background-size:cover;background-position:center;}
   .bg-overlay{position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;}
   .dc{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;gap:10px;}
   .scanlines{position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:10;}
-  .db-value{font-family:'Oswald',sans-serif;font-size:100px;font-weight:600;letter-spacing:-2px;line-height:.9;transition:color .15s;min-width:230px;text-align:right;}
-  .db-unit{font-family:'Oswald',sans-serif;font-size:28px;font-weight:300;color:#556;margin-bottom:10px;letter-spacing:2px;}
-  .level-label{font-family:'Oswald',sans-serif;font-size:18px;font-weight:300;letter-spacing:6px;text-transform:uppercase;text-align:center;transition:color .2s;min-height:26px;}
+  .db-value{font-family:'Oswald',sans-serif;font-size:90px;font-weight:600;letter-spacing:-2px;line-height:.9;transition:color .15s;min-width:200px;text-align:right;}
+  .db-unit{font-family:'Oswald',sans-serif;font-size:26px;font-weight:300;color:#556;margin-bottom:8px;letter-spacing:2px;}
+  .level-label{font-family:'Oswald',sans-serif;font-size:16px;font-weight:300;letter-spacing:6px;text-transform:uppercase;text-align:center;transition:color .2s;min-height:24px;}
   .meter-section{width:100%;}
   .scale-labels{display:flex;justify-content:space-between;padding:0 2px;margin-bottom:3px;}
   .scale-labels span{font-size:10px;color:#445;}
-  .bar-container{width:100%;height:36px;background:#0d1015;border:1px solid #1a2030;border-radius:3px;overflow:hidden;position:relative;}
+  .bar-container{width:100%;height:32px;background:#0d1015;border:1px solid #1a2030;border-radius:3px;overflow:hidden;position:relative;}
   .bar-segments{display:flex;height:100%;gap:2px;padding:3px;}
   .seg{flex:1;border-radius:2px;transition:opacity .05s;}
   .seg.off{opacity:.08;}.seg.on{opacity:1;}
   .seg.green{background:#00e676;}.seg.yellow{background:#ffea00;}.seg.orange{background:#ff9100;}.seg.red{background:#ff1744;}
   .peak-hold{position:absolute;top:3px;bottom:3px;width:3px;background:#fff;border-radius:1px;transition:left .1s;}
   .ch-bars{display:flex;gap:6px;margin-top:5px;}
-  .ch-bar{flex:1;height:16px;background:#0d1015;border:1px solid #1a2030;border-radius:2px;overflow:hidden;position:relative;}
+  .ch-bar{flex:1;height:14px;background:#0d1015;border:1px solid #1a2030;border-radius:2px;overflow:hidden;position:relative;}
   .ch-fill{height:100%;transition:width .08s;border-radius:2px;}
-  .ch-label{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;}
-  .stats-row{display:flex;gap:14px;justify-content:center;}
-  .stat-box{background:#0d1015;border:1px solid #1a2030;border-radius:4px;padding:6px 14px;text-align:center;min-width:75px;}
-  .stat-label{font-size:10px;color:#445;letter-spacing:2px;margin-bottom:2px;}
-  .stat-value{font-size:17px;color:#7a8fa0;}
+  .ch-label{position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:8px;color:rgba(255,255,255,.5);}
+  .stats-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .stat-box{background:#0d1015;border:1px solid #1a2030;border-radius:4px;padding:5px 12px;text-align:center;min-width:65px;}
+  .stat-label{font-size:9px;color:#445;letter-spacing:2px;margin-bottom:2px;}
+  .stat-value{font-size:15px;color:#7a8fa0;}
   .stat-value.peak{color:#ff4d4d;}.stat-value.avg{color:#00bcd4;}
-  .control-panel{width:100%;background:#0d1015;border-top:1px solid #1a2030;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .control-panel{width:100%;background:#0d1015;border-top:1px solid #1a2030;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
   .ctrl-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:110px;}
   .ctrl-label{font-size:10px;color:#445;letter-spacing:2px;text-transform:uppercase;}
   .ctrl-row{display:flex;align-items:center;gap:7px;}
@@ -48,21 +49,20 @@
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#00bcd4;border:2px solid #003a45;cursor:pointer;}
   .ctrl-val{font-size:13px;color:#00bcd4;min-width:44px;text-align:right;}
   .btn-group{display:flex;gap:5px;flex-wrap:wrap;}
-  .btn{background:#111620;border:1px solid #2a3545;color:#8899aa;padding:6px 12px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:all .15s;}
+  .btn{background:#111620;border:1px solid #2a3545;color:#8899aa;padding:6px 11px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:all .15s;}
   .btn:hover{background:#1a2535;color:#ccd;border-color:#445;}
   .btn.active{background:#00bcd4;color:#003;border-color:#00bcd4;}
   .btn.danger{border-color:#ff4444;color:#ff6666;}
   .btn.danger:hover{background:#ff1744;color:#fff;}
   .btn.panne{border-color:#ff00ff;color:#ff00ff;font-size:10px;}
-  .btn.panne:hover{background:#ff00ff;color:#000;}
   .btn.panne.active{background:#ff00ff;color:#000;border-color:#ff00ff;}
-  .btn.launch{background:#1a3020;border-color:#00e676;color:#00e676;font-size:12px;padding:8px 16px;}
+  .btn.launch{background:#1a3020;border-color:#00e676;color:#00e676;font-size:11px;padding:7px 14px;}
   .btn.launch:hover{background:#00e676;color:#003;}
   .divider{width:1px;background:#1a2030;align-self:stretch;flex-shrink:0;}
-  .needle-wrap{position:relative;width:220px;height:95px;flex-shrink:0;}
-  .config-panel{background:#0a0c0f;padding:14px 20px;border-top:1px solid #1a2030;}
+  .needle-wrap{position:relative;width:180px;height:80px;flex-shrink:0;}
+  .config-panel{background:#0a0c0f;padding:14px 16px;border-top:1px solid #1a2030;}
   .config-title{font-size:10px;color:#445;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
-  .config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px;}
+  .config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:7px;}
   .config-item{display:flex;flex-direction:column;gap:3px;}
   .config-item label{font-size:10px;letter-spacing:1px;}
   .config-item input[type=text]{background:#111620;border:1px solid #2a3545;color:#cdd;padding:5px 8px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;width:100%;}
@@ -72,11 +72,15 @@
   .lcfg input[type=text]:focus{border-color:#00bcd4;}
   .info-box{background:#0d1520;border:1px solid #1a3040;border-radius:6px;padding:10px 14px;font-size:12px;color:#7a9ab0;line-height:1.9;margin-bottom:12px;}
   .info-box b{color:#00bcd4;}
+  .info-box .url-display{background:#080b0f;border:1px solid #1a3040;border-radius:4px;padding:6px 10px;font-size:12px;color:#00e676;letter-spacing:1px;word-break:break-all;margin-top:4px;}
   .panne-overlay{display:none;position:absolute;top:0;left:0;right:0;bottom:0;z-index:20;background:#000;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
   .panne-overlay.active{display:flex;}
-  .panne-txt{font-family:'Oswald',sans-serif;font-size:48px;font-weight:600;letter-spacing:8px;color:#ff00ff;animation:pflic 0.4s step-end infinite;}
-  .panne-sub{font-family:'Share Tech Mono',monospace;font-size:16px;letter-spacing:4px;color:#aa44aa;}
+  .panne-txt{font-family:'Oswald',sans-serif;font-size:40px;font-weight:600;letter-spacing:8px;color:#ff00ff;animation:pflic .4s step-end infinite;}
+  .panne-sub{font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:4px;color:#aa44aa;}
   @keyframes pflic{0%,100%{opacity:1;}50%{opacity:.2;}}
+  .conn-status{font-size:11px;letter-spacing:1px;padding:4px 10px;border-radius:4px;border:1px solid #2a3545;color:#556;}
+  .conn-status.ok{color:#00e676;border-color:#00e676;}
+  .conn-status.err{color:#ff4444;border-color:#ff4444;}
 </style>
 </head>
 <body>
@@ -89,9 +93,10 @@
 <div id="panelCtrl">
   <div class="brand-bar">
     <span style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:300;letter-spacing:4px;color:#556;text-transform:uppercase;">SoundLevel Pro — SPL-9000</span>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <button class="btn launch" onclick="openDisplay()">OUVRIR ECRAN DIFFUSION</button>
-      <div class="status-led"></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="conn-status" id="connStatus">HORS LIGNE</span>
+      <a class="btn launch" href="display.html" target="_blank">OUVRIR ECRAN DIFFUSION</a>
+      <div class="status-led" id="statusLed"></div>
     </div>
   </div>
 
@@ -99,8 +104,8 @@
     <div class="bg-layer" id="bgLayer"></div>
     <div class="bg-overlay" id="bgOverlay" style="background:rgba(8,11,15,.72);"></div>
     <div class="dc">
-      <div id="logoArea" style="display:flex;min-height:20px;"></div>
-      <div style="display:flex;align-items:flex-end;gap:10px;justify-content:center;">
+      <div id="logoArea" style="display:flex;min-height:16px;"></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;justify-content:center;">
         <div class="db-value" id="dbValue">45</div>
         <div class="db-unit">dB</div>
       </div>
@@ -140,7 +145,7 @@
       </div>
     </div>
     <div class="divider"></div>
-    <div class="ctrl-group" style="flex:0;min-width:100px;">
+    <div class="ctrl-group" style="flex:0;min-width:90px;">
       <div class="ctrl-label">Fluctuation</div>
       <div class="ctrl-row">
         <input type="range" id="jitterSlider" min="0" max="12" value="3" step="1">
@@ -165,16 +170,16 @@
     </div>
     <div class="divider"></div>
     <div class="needle-wrap">
-      <svg width="100%" height="100%" viewBox="0 0 220 95" xmlns="http://www.w3.org/2000/svg">
+      <svg width="100%" height="100%" viewBox="0 0 180 80" xmlns="http://www.w3.org/2000/svg">
         <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00e676"/><stop offset="50%" stop-color="#ffea00"/><stop offset="75%" stop-color="#ff9100"/><stop offset="100%" stop-color="#ff1744"/></linearGradient></defs>
-        <path d="M10 87 A100 100 0 0 1 210 87" fill="none" stroke="#1a2030" stroke-width="8" stroke-linecap="round"/>
-        <path d="M10 87 A100 100 0 0 1 210 87" fill="none" stroke="url(#ag)" stroke-width="3" stroke-linecap="round" opacity=".6"/>
-        <text x="7" y="96" fill="#334" font-size="9" font-family="monospace">0</text>
-        <text x="110" y="12" fill="#334" font-size="9" font-family="monospace" text-anchor="middle">70</text>
-        <text x="213" y="96" fill="#334" font-size="9" font-family="monospace" text-anchor="end">140</text>
-        <line id="needle" x1="110" y1="87" x2="58" y2="30" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="110" cy="87" r="5" fill="#1a2030" stroke="#556" stroke-width="1"/>
-        <circle cx="110" cy="87" r="2.5" fill="#00bcd4"/>
+        <path d="M8 74 A82 82 0 0 1 172 74" fill="none" stroke="#1a2030" stroke-width="7" stroke-linecap="round"/>
+        <path d="M8 74 A82 82 0 0 1 172 74" fill="none" stroke="url(#ag)" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>
+        <text x="5" y="80" fill="#334" font-size="8" font-family="monospace">0</text>
+        <text x="90" y="10" fill="#334" font-size="8" font-family="monospace" text-anchor="middle">70</text>
+        <text x="175" y="80" fill="#334" font-size="8" font-family="monospace" text-anchor="end">140</text>
+        <line id="needle" x1="90" y1="74" x2="46" y2="24" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="90" cy="74" r="4" fill="#1a2030" stroke="#556" stroke-width="1"/>
+        <circle cx="90" cy="74" r="2" fill="#00bcd4"/>
       </svg>
     </div>
   </div>
@@ -183,25 +188,26 @@
 <div id="panelCfg" style="display:none;">
   <div class="config-panel" style="border-top:none;">
     <div class="info-box">
-      <b>Mode d'emploi :</b><br>
-      1. Configure ici les labels, logo, fond — puis <b>APPLIQUER</b><br>
-      2. Onglet <b>CONTROLE</b> → bouton vert <b>OUVRIR ECRAN DIFFUSION</b><br>
-      3. Deplace la fenetre sur ton grand ecran → <b>F11</b> plein ecran 1920x1080<br>
-      4. Pilote depuis cet onglet — tout se synchronise en temps reel
+      <b>Ecran de diffusion (URL fixe) :</b>
+      <div class="url-display">https://fk-leconducteur.github.io/decibelmetre/display.html</div>
+      <br>
+      Ouvre cette URL sur ton grand ecran → <b>F11</b> pour plein ecran.<br>
+      Pilote depuis n'importe quel appareil connecte a internet !<br><br>
+      <b>Connexion :</b> <span id="cfgConnStatus" style="color:#00e676;">--</span>
     </div>
     <div class="config-title">Labels selon niveau — et message EN PANNE</div>
     <div class="config-grid" id="configGrid"></div>
     <div style="margin-top:14px;display:flex;gap:18px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:190px;">
+      <div style="flex:1;min-width:180px;">
         <div class="config-title" style="margin-bottom:8px;">Logo (haut gauche)</div>
         <div class="lcfg" style="margin-bottom:7px;"><label>URL image du logo</label><input type="text" id="logoUrl" placeholder="https://monsite.com/logo.png" oninput="previewLogo()"></div>
         <div class="lcfg"><label>Ou nom / texte evenement</label><input type="text" id="logoText" placeholder="NOM EVENEMENT" oninput="previewLogo()"></div>
-        <div style="margin-top:7px;display:flex;align-items:center;gap:8px;">
+        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;">
           <span style="font-size:10px;color:#445;">Apercu :</span>
-          <div id="logoPreview" style="background:#0d1015;border:1px solid #2a3545;border-radius:4px;padding:5px 8px;min-width:70px;min-height:28px;display:flex;align-items:center;"><span style="font-size:9px;color:#445;">--</span></div>
+          <div id="logoPreview" style="background:#0d1015;border:1px solid #2a3545;border-radius:4px;padding:4px 8px;min-width:60px;min-height:26px;display:flex;align-items:center;"><span style="font-size:9px;color:#445;">--</span></div>
         </div>
       </div>
-      <div style="flex:1;min-width:190px;">
+      <div style="flex:1;min-width:180px;">
         <div class="config-title" style="margin-bottom:8px;">Fond d'ecran</div>
         <div class="lcfg" style="margin-bottom:7px;"><label>URL image de fond</label><input type="text" id="bgUrl" placeholder="https://..." oninput="updateBg()"></div>
         <div class="lcfg"><label>Opacite du voile</label>
@@ -216,12 +222,50 @@
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// =============================================
+// REMPLACE CES VALEURS PAR TES INFOS FIREBASE
+// =============================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAZlP3SoPQonst5yVf449gDucQAndQFI1w",
+  authDomain: "decibelmetre.firebaseapp.com",
+  databaseURL: "https://decibelmetre-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "decibelmetre",
+  storageBucket: "decibelmetre.firebasestorage.app",
+  messagingSenderId: "957328944019",
+  appId: "1:957328944019:web:aa7a900174e6992c6f9666"
+};
+// =============================================
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const stateRef = ref(db, 'spl/state');
+
+window._fbSet = (data) => {
+  set(stateRef, data).catch(e => console.error(e));
+};
+
+// Indicateur connexion
+onValue(stateRef, () => {
+  document.getElementById('connStatus').textContent = 'EN LIGNE';
+  document.getElementById('connStatus').className = 'conn-status ok';
+  document.getElementById('cfgConnStatus').textContent = 'Connecte';
+  document.getElementById('statusLed').className = 'status-led connected';
+}, (err) => {
+  document.getElementById('connStatus').textContent = 'ERREUR';
+  document.getElementById('connStatus').className = 'conn-status err';
+});
+</script>
+
 <script>
 const NUM=60;
 let targetDb=45,currentDb=45,peakDb=0,sMin=999,sMax=0,avgSum=0,avgCount=0;
 let animOn=true,panicTmt=null,bgOpacityVal=72,panneMode=false;
-let displayWin=null;
-let panneLabel='EN PANNE !', panneSublabel='VOUS AVEZ TOUT CASSE !';
+let panneLabel='EN PANNE !',panneSublabel='VOUS AVEZ TOUT CASSE !';
 
 const defaultLevels=[
   {max:20,label:'SILENCE ABSOLU',color:'#00e676'},
@@ -239,6 +283,23 @@ const defaultLevels=[
 ];
 let levels=defaultLevels.map(l=>({...l}));
 
+function sendState(db,pk){
+  if(window._fbSet){
+    window._fbSet({
+      db:Math.round(db*10)/10,
+      pk:Math.round(pk*10)/10,
+      panne:panneMode,
+      panneLabel,panneSublabel,
+      levels,
+      logoUrl:(document.getElementById('logoUrl')||{}).value||'',
+      logoText:(document.getElementById('logoText')||{}).value||'',
+      bgUrl:(document.getElementById('bgUrl')||{}).value||'',
+      bgOpacity:bgOpacityVal,
+      ts:Date.now()
+    });
+  }
+}
+
 function buildSegs(){
   const c=document.getElementById('barSegs');c.innerHTML='';
   for(let i=0;i<NUM;i++){const s=document.createElement('div');s.className='seg off';const p=(i/NUM)*140;s.classList.add(p<60?'green':p<85?'yellow':p<105?'orange':'red');c.appendChild(s);}
@@ -255,7 +316,7 @@ function buildConfigGrid(){
   const sep=document.createElement('div');sep.style.cssText='grid-column:1/-1;border-top:1px solid #1a2030;padding-top:10px;margin-top:4px;';
   const st=document.createElement('div');st.style.cssText='font-size:10px;color:#ff00ff;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;';st.textContent='Texte mode EN PANNE';
   sep.appendChild(st);g.appendChild(sep);
-  [{id:'panneInp1',lab:'Titre (grand)',val:panneLabel,ph:'EN PANNE !'},{id:'panneInp2',lab:'Sous-titre',val:panneSublabel,ph:'VOUS AVEZ TOUT CASSE !'}].forEach(x=>{
+  [{id:'panneInp1',lab:'Titre',val:panneLabel,ph:'EN PANNE !'},{id:'panneInp2',lab:'Sous-titre',val:panneSublabel,ph:'VOUS AVEZ TOUT CASSE !'}].forEach(x=>{
     const w=document.createElement('div');w.className='config-item';
     const l=document.createElement('label');l.textContent=x.lab;l.style.color='#aa44aa';
     const inp=document.createElement('input');inp.type='text';inp.id=x.id;inp.value=x.val;inp.placeholder=x.ph;
@@ -280,28 +341,25 @@ function updateDisplay(db){
   document.getElementById('ch2').style.width=Math.min(100,(db+(Math.random()*6-3))/140*100)+'%';
   document.getElementById('ch3').style.width=Math.min(100,(db*.85+(Math.random()*4-2))/140*100)+'%';
   document.getElementById('ch4').style.width=Math.min(100,(db*.6+(Math.random()*8-4))/140*100)+'%';
-  document.getElementById('ch1').style.background=cf(db);
-  document.getElementById('ch2').style.background=cf(db);
+  document.getElementById('ch1').style.background=cf(db);document.getElementById('ch2').style.background=cf(db);
   const angle=-130+(db/140)*260,rad=(angle*Math.PI)/180;
-  const nx=110+Math.sin(rad)*60,ny=87-Math.cos(rad)*60;
+  const nx=90+Math.sin(rad)*48,ny=74-Math.cos(rad)*48;
   const n=document.getElementById('needle');n.setAttribute('x2',nx.toFixed(1));n.setAttribute('y2',ny.toFixed(1));n.setAttribute('stroke',lv.color);
   if(db>peakDb){peakDb=db;document.getElementById('peakVal').textContent=Math.round(peakDb)+' dB';}
   if(db<sMin){sMin=db;document.getElementById('minVal').textContent=Math.round(db)+' dB';}
   if(db>sMax){sMax=db;document.getElementById('maxVal').textContent=Math.round(db)+' dB';}
   avgSum+=db;avgCount++;
   if(avgCount%10===0)document.getElementById('avgVal').textContent=Math.round(avgSum/avgCount)+' dB';
-  sendToDisplay({type:'spl',db:db,pk:peakDb});
 }
 
-function togglePanne(){
-  panneMode=!panneMode;
-  document.getElementById('btnPanne').classList.toggle('active',panneMode);
-  document.getElementById('panneOverlay').classList.toggle('active',panneMode);
-  sendToDisplay({type:'panne',active:panneMode,label:panneLabel,sub:panneSublabel});
-}
-
+let lastSend=0;
 function tick(){
-  if(animOn&&!panneMode){const j=parseFloat(document.getElementById('jitterSlider').value);updateDisplay(targetDb+(Math.random()*2-1)*j+Math.sin(Date.now()/300)*1.5);}
+  if(animOn&&!panneMode){
+    const j=parseFloat(document.getElementById('jitterSlider').value);
+    updateDisplay(targetDb+(Math.random()*2-1)*j+Math.sin(Date.now()/300)*1.5);
+  }
+  const now=Date.now();
+  if(now-lastSend>100){lastSend=now;sendState(currentDb,peakDb);}
   requestAnimationFrame(tick);
 }
 
@@ -309,6 +367,13 @@ function toggleAnim(){animOn=!animOn;const b=document.getElementById('btnAnim');
 function resetStats(){peakDb=0;sMin=999;sMax=0;avgSum=0;avgCount=1;['peakVal','avgVal','minVal','maxVal'].forEach(id=>document.getElementById(id).textContent='--');}
 function panic(){if(panneMode)return;const o=targetDb;const sp=Math.min(140,targetDb+28+Math.random()*14);targetDb=sp;document.getElementById('dbSlider').value=sp;document.getElementById('sliderVal').textContent=Math.round(sp)+' dB';clearTimeout(panicTmt);panicTmt=setTimeout(()=>{targetDb=o;document.getElementById('dbSlider').value=o;document.getElementById('sliderVal').textContent=Math.round(o)+' dB';},1200);}
 function setPreset(v){if(panneMode)return;targetDb=v;document.getElementById('dbSlider').value=v;document.getElementById('sliderVal').textContent=v+' dB';if(!animOn)updateDisplay(v);}
+function togglePanne(){
+  panneMode=!panneMode;
+  document.getElementById('btnPanne').classList.toggle('active',panneMode);
+  document.getElementById('panneOverlay').classList.toggle('active',panneMode);
+  sendState(currentDb,peakDb);
+}
+
 document.getElementById('dbSlider').addEventListener('input',function(){if(panneMode)return;targetDb=parseFloat(this.value);document.getElementById('sliderVal').textContent=Math.round(targetDb)+' dB';if(!animOn)updateDisplay(targetDb);});
 document.getElementById('jitterSlider').addEventListener('input',function(){document.getElementById('jitterVal').textContent='±'+this.value;});
 
@@ -319,16 +384,14 @@ function applyConfig(){
   if(p2&&p2.value.trim())panneSublabel=p2.value.trim().toUpperCase();
   document.getElementById('panneTxt').textContent=panneLabel;
   document.getElementById('panneSub').textContent=panneSublabel;
-  applyLogoAndBg();updateDisplay(currentDb);
+  applyLogoAndBg();updateDisplay(currentDb);sendState(currentDb,peakDb);
 }
 
 function applyLogoAndBg(){
-  const url=document.getElementById('logoUrl').value.trim();
-  const txt=document.getElementById('logoText').value.trim();
-  const area=document.getElementById('logoArea');
+  const url=document.getElementById('logoUrl').value.trim(),txt=document.getElementById('logoText').value.trim(),area=document.getElementById('logoArea');
   area.innerHTML='';
-  if(url){const img=document.createElement('img');img.src=url;img.style.cssText='max-height:44px;max-width:160px;object-fit:contain;';area.appendChild(img);}
-  else if(txt){const sp=document.createElement('span');sp.textContent=txt.toUpperCase();sp.style.cssText='font-family:Oswald,sans-serif;font-size:16px;font-weight:600;letter-spacing:4px;color:#fff;';area.appendChild(sp);}
+  if(url){const img=document.createElement('img');img.src=url;img.style.cssText='max-height:40px;max-width:140px;object-fit:contain;';area.appendChild(img);}
+  else if(txt){const sp=document.createElement('span');sp.textContent=txt.toUpperCase();sp.style.cssText='font-family:Oswald,sans-serif;font-size:15px;font-weight:600;letter-spacing:4px;color:#fff;';area.appendChild(sp);}
   const bgUrl=document.getElementById('bgUrl').value.trim();
   document.getElementById('bgLayer').style.backgroundImage=bgUrl?`url(${bgUrl})`:'none';
   document.getElementById('bgOverlay').style.background=`rgba(8,11,15,${bgOpacityVal/100})`;
@@ -337,110 +400,13 @@ function applyLogoAndBg(){
 function previewLogo(){
   const url=document.getElementById('logoUrl').value.trim(),txt=document.getElementById('logoText').value.trim(),p=document.getElementById('logoPreview');
   p.innerHTML='';
-  if(url){const img=document.createElement('img');img.src=url;img.style.cssText='max-height:26px;max-width:110px;object-fit:contain;';p.appendChild(img);}
-  else if(txt)p.innerHTML=`<span style="font-size:11px;color:#ccd;font-family:monospace;letter-spacing:2px;">${txt.substring(0,14).toUpperCase()}</span>`;
+  if(url){const img=document.createElement('img');img.src=url;img.style.cssText='max-height:22px;max-width:100px;object-fit:contain;';p.appendChild(img);}
+  else if(txt)p.innerHTML=`<span style="font-size:10px;color:#ccd;font-family:monospace;letter-spacing:2px;">${txt.substring(0,12).toUpperCase()}</span>`;
   else p.innerHTML='<span style="font-size:9px;color:#445;">--</span>';
 }
-
 function updateBg(){const u=document.getElementById('bgUrl').value.trim();document.getElementById('bgLayer').style.backgroundImage=u?`url(${u})`:'none';document.getElementById('bgOverlay').style.background=`rgba(8,11,15,${bgOpacityVal/100})`;}
 function updateBgOpacity(){bgOpacityVal=parseInt(document.getElementById('bgOpacity').value);document.getElementById('bgOpVal').textContent=bgOpacityVal+'%';document.getElementById('bgOverlay').style.background=`rgba(8,11,15,${bgOpacityVal/100})`;}
 function resetConfig(){levels=defaultLevels.map(l=>({...l}));panneLabel='EN PANNE !';panneSublabel='VOUS AVEZ TOUT CASSE !';buildConfigGrid();updateDisplay(currentDb);}
-function sendToDisplay(msg){if(displayWin&&!displayWin.closed)displayWin.postMessage(msg,'*');}
-
-function openDisplay(){
-  const logoUrl=document.getElementById('logoUrl').value.trim();
-  const logoTxt=document.getElementById('logoText').value.trim();
-  const bgUrl=document.getElementById('bgUrl').value.trim();
-  const logoHTML=logoUrl
-    ?`<img style="max-height:90px;max-width:280px;object-fit:contain;" src="${logoUrl}">`
-    :logoTxt?`<span style="font-family:'Oswald',sans-serif;font-size:30px;font-weight:600;letter-spacing:6px;color:#fff;">${logoTxt.toUpperCase()}</span>`
-    :'';
-  const lvsJSON=JSON.stringify(levels);
-  const opa=bgOpacityVal/100;
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Decibelmetre Diffusion</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;400;600&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:1920px;height:1080px;overflow:hidden;background:#080b0f;}
-body{font-family:'Share Tech Mono',monospace;color:#e0e0e0;position:relative;}
-.bg{position:fixed;top:0;left:0;width:1920px;height:1080px;background-size:cover;background-position:center;z-index:0;${bgUrl?'background-image:url('+bgUrl+');':''}}
-.ov{position:fixed;top:0;left:0;width:1920px;height:1080px;background:rgba(8,11,15,${opa});z-index:1;}
-.scan{position:fixed;top:0;left:0;width:1920px;height:1080px;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);z-index:2;pointer-events:none;}
-.logo-zone{position:absolute;top:48px;left:64px;z-index:4;display:flex;align-items:center;}
-.center-block{position:absolute;top:0;left:0;width:1920px;height:1080px;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px 120px;}
-.db-row{display:flex;align-items:flex-end;gap:20px;line-height:1;}
-.db-val{font-family:'Oswald',sans-serif;font-size:340px;font-weight:600;line-height:.82;letter-spacing:-12px;transition:color .15s;}
-.db-unit{font-family:'Oswald',sans-serif;font-size:86px;font-weight:300;color:#556;letter-spacing:4px;margin-bottom:28px;}
-.lbl{font-family:'Oswald',sans-serif;font-size:58px;font-weight:300;letter-spacing:16px;text-transform:uppercase;transition:color .2s;text-align:center;}
-.bar-wrap{width:1400px;}
-.scale{display:flex;justify-content:space-between;margin-bottom:8px;}
-.scale span{font-size:20px;color:#445;letter-spacing:1px;}
-.bar{width:100%;height:72px;background:#0d1015;border:1px solid #1a2030;border-radius:4px;overflow:hidden;position:relative;}
-.segs{display:flex;height:100%;gap:3px;padding:7px;}
-.seg{flex:1;border-radius:3px;}
-.seg.off{opacity:.08;}.seg.on{opacity:1;}
-.seg.g{background:#00e676;}.seg.y{background:#ffea00;}.seg.o{background:#ff9100;}.seg.r{background:#ff1744;}
-.pk{position:absolute;top:7px;bottom:7px;width:5px;background:#fff;border-radius:2px;transition:left .1s;}
-.chbars{display:flex;gap:12px;margin-top:10px;width:1400px;}
-.chbar{flex:1;height:28px;background:#0d1015;border:1px solid #1a2030;border-radius:3px;overflow:hidden;position:relative;}
-.chfill{height:100%;transition:width .08s;border-radius:3px;}
-.chlbl{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.5);letter-spacing:2px;}
-.panne{display:none;position:fixed;top:0;left:0;width:1920px;height:1080px;background:#000;z-index:50;align-items:center;justify-content:center;flex-direction:column;gap:28px;}
-.panne.on{display:flex;}
-.ptxt{font-family:'Oswald',sans-serif;font-size:150px;font-weight:600;letter-spacing:14px;color:#ff00ff;animation:pf .4s step-end infinite;text-align:center;}
-.psub{font-family:'Share Tech Mono',monospace;font-size:38px;letter-spacing:8px;color:#aa44aa;text-align:center;}
-@keyframes pf{0%,100%{opacity:1;}50%{opacity:.12;}}
-</style></head><body>
-<div class="bg"></div><div class="ov"></div><div class="scan"></div>
-<div class="logo-zone">${logoHTML}</div>
-<div class="center-block">
-  <div class="db-row"><div class="db-val" id="D">45</div><div class="db-unit">dB</div></div>
-  <div class="lbl" id="L">CALME</div>
-  <div class="bar-wrap">
-    <div class="scale"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span><span>120</span><span>140</span></div>
-    <div class="bar"><div class="segs" id="S"></div><div class="pk" id="P"></div></div>
-    <div class="chbars">
-      <div class="chbar"><div class="chfill" id="c1" style="background:#00e676;width:30%;"></div><div class="chlbl">L</div></div>
-      <div class="chbar"><div class="chfill" id="c2" style="background:#00e676;width:30%;"></div><div class="chlbl">R</div></div>
-      <div class="chbar"><div class="chfill" id="c3" style="background:#00bcd4;width:25%;"></div><div class="chlbl">MIC</div></div>
-      <div class="chbar"><div class="chfill" id="c4" style="background:#ff9100;width:18%;"></div><div class="chlbl">LFE</div></div>
-    </div>
-  </div>
-</div>
-<div class="panne" id="PO"><div class="ptxt" id="PT">EN PANNE !</div><div class="psub" id="PS">VOUS AVEZ TOUT CASSE !</div></div>
-<script>
-var N=60,lv=${lvsJSON};
-var c=document.getElementById('S');
-for(var i=0;i<N;i++){var s=document.createElement('div');s.className='seg off';var p=(i/N)*140;s.classList.add(p<60?'g':p<85?'y':p<105?'o':'r');c.appendChild(s);}
-function upd(db,pk){
-  db=Math.max(0,Math.min(140,db));
-  var l=lv.find(function(x){return db<=x.max;})||lv[lv.length-1];
-  document.querySelectorAll('.seg').forEach(function(s,i){var a=Math.round((db/140)*N);s.classList.toggle('on',i<a);s.classList.toggle('off',i>=a);});
-  var D=document.getElementById('D'),L=document.getElementById('L'),PP=document.getElementById('P');
-  D.textContent=Math.round(db);D.style.color=l.color;D.style.textShadow='0 0 120px '+l.color+'28';
-  L.textContent=l.label;L.style.color=l.color;
-  PP.style.left='calc('+(pk/140*100)+'% - 2px)';
-  var cf=function(v){return v<60?'#00e676':v<85?'#ffea00':v<105?'#ff9100':'#ff1744';};
-  document.getElementById('c1').style.width=Math.min(100,(db+(Math.random()*6-3))/140*100)+'%';document.getElementById('c1').style.background=cf(db);
-  document.getElementById('c2').style.width=Math.min(100,(db+(Math.random()*6-3))/140*100)+'%';document.getElementById('c2').style.background=cf(db);
-  document.getElementById('c3').style.width=Math.min(100,(db*.85+(Math.random()*4-2))/140*100)+'%';
-  document.getElementById('c4').style.width=Math.min(100,(db*.6+(Math.random()*8-4))/140*100)+'%';
-}
-function showPanne(active,label,sub){
-  document.getElementById('PO').classList.toggle('on',active);
-  if(label)document.getElementById('PT').textContent=label;
-  if(sub)document.getElementById('PS').textContent=sub;
-}
-window.addEventListener('message',function(e){
-  if(!e.data)return;
-  if(e.data.type==='spl')upd(e.data.db,e.data.pk);
-  if(e.data.type==='panne')showPanne(e.data.active,e.data.label,e.data.sub);
-});
-<\/script></body></html>`;
-  displayWin=window.open('','_blank','width=1920,height=1080');
-  if(!displayWin){alert('Popup bloque ! Autorise les popups dans ton navigateur.');return;}
-  displayWin.document.open();displayWin.document.write(html);displayWin.document.close();
-}
 
 function switchTab(t){
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',i===(t==='ctrl'?0:1)));
