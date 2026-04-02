@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Decibelmetre — Diffusion</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#080b0f;}
+body{font-family:'Share Tech Mono',monospace;color:#e0e0e0;position:relative;}
+.bg{position:fixed;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;z-index:0;}
+.ov{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;}
+.scan{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);z-index:2;pointer-events:none;}
+.logo-zone{position:fixed;top:3vh;left:3vw;z-index:4;display:flex;align-items:center;max-width:20vw;}
+.logo-img{max-height:8vh;max-width:18vw;object-fit:contain;}
+.logo-txt{font-family:'Oswald',sans-serif;font-size:2.2vw;font-weight:600;letter-spacing:.4vw;color:#fff;}
+.center-block{position:fixed;top:0;left:0;width:100%;height:100%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5vh;padding:5vh 8vw;}
+.db-row{display:flex;align-items:flex-end;gap:1.5vw;line-height:1;}
+.db-val{font-family:'Oswald',sans-serif;font-size:28vw;font-weight:600;line-height:.82;letter-spacing:-.8vw;transition:color .15s;}
+.db-unit{font-family:'Oswald',sans-serif;font-size:6vw;font-weight:300;color:#556;letter-spacing:.3vw;margin-bottom:2vw;}
+.lbl{font-family:'Oswald',sans-serif;font-size:4vw;font-weight:300;letter-spacing:1vw;text-transform:uppercase;transition:color .2s;text-align:center;}
+.bar-wrap{width:80vw;max-width:1400px;}
+.scale{display:flex;justify-content:space-between;margin-bottom:.5vh;}
+.scale span{font-size:1.2vw;color:#445;letter-spacing:.05vw;}
+.bar{width:100%;height:5.5vh;background:#0d1015;border:1px solid #1a2030;border-radius:4px;overflow:hidden;position:relative;}
+.segs{display:flex;height:100%;gap:2px;padding:.5vh;}
+.seg{flex:1;border-radius:3px;}
+.seg.off{opacity:.08;}.seg.on{opacity:1;}
+.seg.g{background:#00e676;}.seg.y{background:#ffea00;}.seg.o{background:#ff9100;}.seg.r{background:#ff1744;}
+.pk{position:absolute;top:.5vh;bottom:.5vh;width:4px;background:#fff;border-radius:2px;transition:left .1s;}
+.chbars{display:flex;gap:1vw;margin-top:1vh;width:80vw;max-width:1400px;}
+.chbar{flex:1;height:2.2vh;background:#0d1015;border:1px solid #1a2030;border-radius:3px;overflow:hidden;position:relative;}
+.chfill{height:100%;transition:width .08s;border-radius:3px;}
+.chlbl{position:absolute;right:.8vw;top:50%;transform:translateY(-50%);font-size:1.1vw;color:rgba(255,255,255,.5);letter-spacing:.15vw;}
+.panne{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:50;align-items:center;justify-content:center;flex-direction:column;gap:4vh;}
+.panne.on{display:flex;}
+.ptxt{font-family:'Oswald',sans-serif;font-size:12vw;font-weight:600;letter-spacing:1vw;color:#ff00ff;animation:pf .4s step-end infinite;text-align:center;}
+.psub{font-family:'Share Tech Mono',monospace;font-size:2.5vw;letter-spacing:.5vw;color:#aa44aa;text-align:center;}
+@keyframes pf{0%,100%{opacity:1;}50%{opacity:.12;}}
+.waiting{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.5vw;color:#334;letter-spacing:.2vw;z-index:10;text-align:center;}
+</style>
+</head>
+<body>
+<div class="bg" id="BG"></div>
+<div class="ov" id="OV" style="background:rgba(8,11,15,.72);"></div>
+<div class="scan"></div>
+<div class="logo-zone" id="LZ"></div>
+<div class="center-block">
+  <div class="db-row"><div class="db-val" id="D">--</div><div class="db-unit">dB</div></div>
+  <div class="lbl" id="L">CONNEXION...</div>
+  <div class="bar-wrap">
+    <div class="scale"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span><span>120</span><span>140</span></div>
+    <div class="bar"><div class="segs" id="S"></div><div class="pk" id="P"></div></div>
+    <div class="chbars">
+      <div class="chbar"><div class="chfill" id="c1" style="background:#00e676;width:0%;"></div><div class="chlbl">L</div></div>
+      <div class="chbar"><div class="chfill" id="c2" style="background:#00e676;width:0%;"></div><div class="chlbl">R</div></div>
+      <div class="chbar"><div class="chfill" id="c3" style="background:#00bcd4;width:0%;"></div><div class="chlbl">MIC</div></div>
+      <div class="chbar"><div class="chfill" id="c4" style="background:#ff9100;width:0%;"></div><div class="chlbl">LFE</div></div>
+    </div>
+  </div>
+</div>
+<div class="panne" id="PO"><div class="ptxt" id="PT">EN PANNE !</div><div class="psub" id="PS">VOUS AVEZ TOUT CASSE !</div></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// =============================================
+// MEMES VALEURS QUE DANS index.html
+// =============================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAZlP3SoPQonst5yVf449gDucQAndQFI1w",
+  authDomain: "decibelmetre.firebaseapp.com",
+  databaseURL: "https://decibelmetre-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "decibelmetre",
+  storageBucket: "decibelmetre.firebasestorage.app",
+  messagingSenderId: "957328944019",
+  appId: "1:957328944019:web:aa7a900174e6992c6f9666"
+};
+// =============================================
+
+const N=60;
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const stateRef = ref(db, 'spl/state');
+
+// Build segments
+const sc = document.getElementById('S');
+for(let i=0;i<N;i++){const s=document.createElement('div');s.className='seg off';const p=(i/N)*140;s.classList.add(p<60?'g':p<85?'y':p<105?'o':'r');sc.appendChild(s);}
+
+function upd(state){
+  const db=Math.max(0,Math.min(140,state.db||0));
+  const pk=state.pk||0;
+  const lv=(state.levels||[]).find(x=>db<=x.max)||(state.levels||[])[((state.levels||[]).length)-1]||{label:'--',color:'#fff'};
+
+  document.querySelectorAll('.seg').forEach((s,i)=>{const a=Math.round((db/140)*N);s.classList.toggle('on',i<a);s.classList.toggle('off',i>=a);});
+  document.getElementById('P').style.left=`calc(${(pk/140)*100}% - 2px)`;
+
+  const D=document.getElementById('D'),L=document.getElementById('L');
+  D.textContent=Math.round(db);D.style.color=lv.color;D.style.textShadow=`0 0 8vw ${lv.color}28`;
+  L.textContent=lv.label;L.style.color=lv.color;
+
+  const cf=v=>v<60?'#00e676':v<85?'#ffea00':v<105?'#ff9100':'#ff1744';
+  document.getElementById('c1').style.width=Math.min(100,(db+(Math.random()*6-3))/140*100)+'%';document.getElementById('c1').style.background=cf(db);
+  document.getElementById('c2').style.width=Math.min(100,(db+(Math.random()*6-3))/140*100)+'%';document.getElementById('c2').style.background=cf(db);
+  document.getElementById('c3').style.width=Math.min(100,(db*.85+(Math.random()*4-2))/140*100)+'%';
+  document.getElementById('c4').style.width=Math.min(100,(db*.6+(Math.random()*8-4))/140*100)+'%';
+
+  // Panne
+  document.getElementById('PO').classList.toggle('on',!!state.panne);
+  if(state.panneLabel)document.getElementById('PT').textContent=state.panneLabel;
+  if(state.panneSublabel)document.getElementById('PS').textContent=state.panneSublabel;
+
+  // Logo
+  const lz=document.getElementById('LZ');
+  const lu=state.logoUrl||'',lt=state.logoText||'';
+  if(lu&&lz.dataset.url!==lu){lz.innerHTML=`<img class="logo-img" src="${lu}">`;lz.dataset.url=lu;}
+  else if(lt&&lz.dataset.txt!==lt){lz.innerHTML=`<span class="logo-txt">${lt.toUpperCase()}</span>`;lz.dataset.txt=lt;}
+  else if(!lu&&!lt){lz.innerHTML='';}
+
+  // Fond
+  if(state.bgUrl){document.getElementById('BG').style.backgroundImage=`url(${state.bgUrl})`;}
+  const opa=(state.bgOpacity||72)/100;
+  document.getElementById('OV').style.background=`rgba(8,11,15,${opa})`;
+}
+
+onValue(stateRef, (snapshot)=>{
+  const state=snapshot.val();
+  if(state)upd(state);
+});
+</script>
+</body>
+</html>
